@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build:ui": "@powershell Remove-Item -Recurse -Force build && cd ../bcw-2023summer-jot-react && npm run build && @powershell Copy-Item build -Recurse ../bcw-2023summer-jot-server",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
