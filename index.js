@@ -2,7 +2,7 @@ const express = require('express')
 require('dotenv').config()
 const cors = require('cors')
 const app = express()
-const { Note } = require('./models/Note')
+const { Note, connectToMongoDb } = require('./models/Note')
 
 let notes = [
     {
@@ -106,7 +106,14 @@ app.put('/api/notes/:noteId', async (req, res) => {
     }
 })
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-})
+const connectAndListen = async () => {
+    await connectToMongoDb()
+    const PORT = process.env.PORT
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`)
+    })
+}
+
+connectAndListen()
+
+

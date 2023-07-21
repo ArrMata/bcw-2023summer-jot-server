@@ -12,9 +12,6 @@ const connectToMongoDb = async () => {
     }
 }
 
-connectToMongoDb()
-
-
 const noteSchema = new mongoose.Schema({
     "title": { type: String, required: true },
     "content": { type: String, required: true },
@@ -31,4 +28,4 @@ noteSchema.set('toJSON', {
 
 const Note = mongoose.model('Note', noteSchema)
 
-module.exports = { Note }
+module.exports = { Note, connectToMongoDb }
