@@ -1,6 +1,8 @@
 const express = require('express')
+require('dotenv').config()
 const cors = require('cors')
 const app = express()
+const { Note } = require('./models/Note')
 
 let notes = [
     {
@@ -27,31 +29,84 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
 
-app.get('/api/notes', (req, res, next) => {
-    return res.json(notes)
+app.get('/api/notes', async (req, res, next) => {
+    try {
+        const notes = await Note.find()
+        res.json(notes)
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).end()
+    }
 })
 
-app.get('/api/notes/:noteId', (req, res, next) => {
-    const noteId = Number(req.params.noteId)
-    const foundNote = notes.find(note => note.id === noteId)
-    if (!foundNote)
-        return res.status(404).send(`no note found with id: ${noteId}`).end()
-    return res.send(foundNote)
+app.get('/api/notes/:noteId', async (req, res, next) => {
+    try {
+        const noteId = req.params.noteId
+        const foundNote = await Note.findById(noteId)
+        if (!foundNote)
+            return res.status(404).send(`no note found with id: ${noteId}`).end()
+        return res.json(foundNote)
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).end()
+    }
 })
 
-app.delete('/api/notes/:noteId', (req, res, next) => {
-    const noteId = Number(req.params.noteId)
-    notes = notes.filter(note => note.id !== noteId)
-
-    res.status(204).end()
+app.delete('/api/notes/:noteId', async (req, res, next) => {
+    try {
+        const noteId = req.params.noteId
+        const foundNote = await Note.findById(noteId)
+        if (!foundNote)
+            return res.status(404).send(`no note found with id: ${noteId}`).end()
+        foundNote.deleteOne()
+        return res.json(foundNote)
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).end()
+    }
 })
 
-app.post('/api/notes', (req, res) => {
-    const note = req.body
-    res.json(note)
+app.post('/api/notes', async (req, res) => {
+    const body = req.body
+
+    if (body.content === undefined) {
+        return res.status(400).json({ error: 'content missing' })
+    }
+
+    try {
+        const note = new Note({
+            content: body.content,
+            title: body.title,
+            color: body.color
+        })
+        await note.save()
+        return res.json(note)
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).end()
+    }
+
 })
 
-const PORT = process.env.PORT || 3001
+app.put('/api/notes/:noteId', async (req, res) => {
+    const body = req.body
+
+    try {
+        const foundNote = await Note.findById(req.params.noteId)
+        if (!foundNote)
+            return res.status(404).send(`no note found with id: ${noteId}`).end()
+
+        foundNote.content = body.content || foundNote.content
+
+        await foundNote.save()
+        return res.json(foundNote)
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).end()
+    }
+})
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
