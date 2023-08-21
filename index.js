@@ -1,30 +1,22 @@
 const express = require('express')
 require('dotenv').config()
 const cors = require('cors')
-const app = express()
 const { Note, connectToMongoDb } = require('./models/Note')
 
-let notes = [
-    {
-        "title": "testing note",
-        "content": "Jot down your thoughts!",
-        "color": "#c10000",
-        "id": 1
-    },
-    {
-        "title": "new note!",
-        "content": "Jot down your thoughts!",
-        "color": "#2fe0ff",
-        "id": 2
-    },
-    {
-        "title": "new note?",
-        "content": "Jot down your thoughts!",
-        "color": "#f4f4f5",
-        "id": 3
+const errorHandler = (error, req, res, next) => {
+    console.error(error.message)
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' })
     }
-]
+    else if (error.name === 'ValidationError') {
+        return res.status(400).send({ error: error.message })
+    }
 
+    next(error)
+}
+
+
+const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
@@ -34,8 +26,7 @@ app.get('/api/notes', async (req, res, next) => {
         const notes = await Note.find()
         res.json(notes)
     } catch (error) {
-        console.log(error.message)
-        return res.status(500).end()
+        next(error)
     }
 })
 
@@ -47,8 +38,7 @@ app.get('/api/notes/:noteId', async (req, res, next) => {
             return res.status(404).send(`no note found with id: ${noteId}`).end()
         return res.json(foundNote)
     } catch (error) {
-        console.log(error.message)
-        return res.status(500).end()
+        next(error)
     }
 })
 
@@ -61,8 +51,7 @@ app.delete('/api/notes/:noteId', async (req, res, next) => {
         foundNote.deleteOne()
         return res.json(foundNote)
     } catch (error) {
-        console.log(error.message)
-        return res.status(500).end()
+        next(error)
     }
 })
 
@@ -82,8 +71,7 @@ app.post('/api/notes', async (req, res) => {
         await note.save()
         return res.json(note)
     } catch (error) {
-        console.log(error.message)
-        return res.status(500).end()
+        next(error)
     }
 
 })
@@ -101,10 +89,11 @@ app.put('/api/notes/:noteId', async (req, res) => {
         await foundNote.save()
         return res.json(foundNote)
     } catch (error) {
-        console.log(error.message)
-        return res.status(500).end()
+        next(error)
     }
 })
+
+app.use(errorHandler)
 
 const connectAndListen = async () => {
     await connectToMongoDb()
