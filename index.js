@@ -55,7 +55,7 @@ app.delete('/api/notes/:noteId', async (req, res, next) => {
     }
 })
 
-app.post('/api/notes', async (req, res) => {
+app.post('/api/notes', async (req, res, next) => {
     const body = req.body
 
     if (body.content === undefined) {
@@ -76,17 +76,14 @@ app.post('/api/notes', async (req, res) => {
 
 })
 
-app.put('/api/notes/:noteId', async (req, res) => {
+app.put('/api/notes/:noteId', async (req, res, next) => {
     const body = req.body
 
     try {
-        const foundNote = await Note.findById(req.params.noteId)
-        if (!foundNote)
-            return res.status(404).send(`no note found with id: ${noteId}`).end()
-
-        foundNote.content = body.content || foundNote.content
-
-        await foundNote.save()
+        const noteData = {
+            content: body.content
+        }
+        const foundNote = await Note.findByIdAndUpdate(req.params.noteId, noteData, { new: true, runValidators: true })
         return res.json(foundNote)
     } catch (error) {
         next(error)
