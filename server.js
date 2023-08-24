@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const config = require('./libraries/config');
-const middleware = require('./libraries/middleware');
-const logger = require('./libraries/logger');
+const Config = require('./libraries/Config');
+const Middleware = require('./libraries/Middleware');
+const Logger = require('./libraries/Logger');
 const notesRouter = require('./apps/notes/entry-points/NotesController');
 
 const app = express();
@@ -11,11 +11,11 @@ mongoose.set('strictQuery', false);
 
 const connectToMongoDb = async () => {
 	try {
-		logger.info('Attempting to connect to MongoDB Database');
-		await mongoose.connect(config.MONGODB_URL);
-		logger.info('[CONNECTED TO MONGODB]');
+		Logger.info('Attempting to connect to MongoDB Database');
+		await mongoose.connect(Config.MONGODB_URL);
+		Logger.info('[CONNECTED TO MONGODB]');
 	} catch (error) {
-		logger.info('[CONNECTION TO MONGODB FAILED]', error.message);
+		Logger.info('[CONNECTION TO MONGODB FAILED]', error.message);
 	}
 };
 
@@ -27,7 +27,8 @@ app.use(express.json());
 
 app.use('/api/notes', notesRouter);
 
-app.use(middleware.unknownEndpoint);
-app.use(middleware.errorHandler);
+app.use(Middleware.unknownEndpoint);
+app.use(Middleware.errorHandler);
+app.use(Middleware.defaultErrorHandler);
 
 module.exports = app;
