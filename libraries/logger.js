@@ -1,12 +1,11 @@
-const info = (...params) => {
-	console.log(...params);
-};
+class Logger {
+	static info = (...params) => {
+		console.log(...params);
+	};
 
-const error = (...params) => {
-	console.log(...params);
-};
+	static error = (...params) => {
+		console.log(...params);
+	};
+}
 
-module.exports = {
-	info,
-	error,
-};
+module.exports = Logger;
