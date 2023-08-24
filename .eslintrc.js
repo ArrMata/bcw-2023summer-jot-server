@@ -16,6 +16,7 @@ module.exports = {
 		"indent": [2, "tab"],
 		"no-tabs": 0,
 		"no-underscore-dangle": 0,
-		"no-console": 0
+		"no-console": 0,
+		"max-classes-per-file": 0
 	}
 };
