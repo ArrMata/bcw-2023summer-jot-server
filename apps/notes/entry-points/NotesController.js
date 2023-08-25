@@ -1,4 +1,5 @@
 const notesRouter = require('express').Router();
+const { jwtCheck } = require('../../../libraries/Config');
 const NotesService = require('../NotesService');
 
 notesRouter.get('', async (req, res, next) => {
@@ -20,7 +21,7 @@ notesRouter.get('/:noteId', async (req, res, next) => {
 	}
 });
 
-notesRouter.delete('/:noteId', async (req, res, next) => {
+notesRouter.delete('/:noteId', jwtCheck, async (req, res, next) => {
 	try {
 		const { noteId } = req.params;
 		const deletedNote = await NotesService.deleteNote(noteId);
@@ -30,7 +31,7 @@ notesRouter.delete('/:noteId', async (req, res, next) => {
 	}
 });
 
-notesRouter.post('', async (req, res, next) => {
+notesRouter.post('', jwtCheck, async (req, res, next) => {
 	try {
 		const { body } = req;
 		const createdNote = await NotesService.createNote(body);
@@ -40,7 +41,7 @@ notesRouter.post('', async (req, res, next) => {
 	}
 });
 
-notesRouter.put('/:noteId', async (req, res, next) => {
+notesRouter.put('/:noteId', jwtCheck, async (req, res, next) => {
 	try {
 		const { body } = req;
 		const updatedNote = await NotesService.updateNote(req.params.noteId, body);
