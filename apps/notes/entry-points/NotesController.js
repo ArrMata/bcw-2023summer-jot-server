@@ -1,5 +1,5 @@
 const notesRouter = require('express').Router();
-const { jwtCheck } = require('../../../libraries/Config');
+const { jwtCheck } = require('../../../libraries/config');
 const NotesService = require('../NotesService');
 
 notesRouter.get('', async (req, res, next) => {
