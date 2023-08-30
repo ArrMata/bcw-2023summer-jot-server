@@ -1,3 +1,4 @@
+const { jwtCheck } = require('./Config');
 const Logger = require('./Logger');
 
 const unknownEndpoint = (request, response) => {
@@ -27,6 +28,9 @@ const defaultErrorHandler = (error, req, res, next) => {
 		Logger.error(err.message);
 	}
 	return res.status(err.status).send({ error: err.message });
+};
+
+const getUserInfo = (req, res, next) => {
 };
 
 module.exports = { errorHandler, unknownEndpoint, defaultErrorHandler };
