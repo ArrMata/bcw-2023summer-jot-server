@@ -1,4 +1,4 @@
-const Logger = require('./logger');
+const Logger = require('./Logger');
 
 const unknownEndpoint = (request, response) => {
 	response.status(404).send({ error: 'unknown endpoint' });

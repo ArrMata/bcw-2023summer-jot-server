@@ -1,4 +1,4 @@
-const { NODE_ENV } = require('./config');
+const { NODE_ENV } = require('./Config');
 
 class Logger {
 	static info = (...params) => {
