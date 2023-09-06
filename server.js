@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Config = require('./libraries/config');
-const Middleware = require('./libraries/middleware');
-const Logger = require('./libraries/logger');
+const Config = require('./libraries/Config');
+const Middleware = require('./libraries/Middleware');
+const Logger = require('./libraries/Logger');
 const notesRouter = require('./apps/notes/entry-points/NotesController');
 
 const app = express();
