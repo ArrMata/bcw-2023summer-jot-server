@@ -1,5 +1,5 @@
-const { PORT } = require('./libraries/config');
-const { info } = require('./libraries/logger');
+const { PORT } = require('./libraries/Config');
+const { info } = require('./libraries/Logger');
 const app = require('./server');
 
 app.listen(PORT, () => {
